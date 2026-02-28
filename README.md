@@ -29,22 +29,26 @@ pip install -r requirements.txt
 ```bash
 python scriba.py interview.mp3
 python scriba.py lecture.wav -m large
+python scriba.py ep1.mp3 ep2.mp3 ep3.mp3        # batch
+python scriba.py call.ogg -l es                  # force Spanish
 ```
 
 ## Usage
 
 ```
-usage: scriba [-h] [-m {tiny,base,small,medium,large}] audio
+usage: scriba [-h] [-m {tiny,base,small,medium,large}] [-l LANGUAGE] audio [audio ...]
 
 Simple transcription helper powered by Whisper.
 
 positional arguments:
-  audio                 path to the audio file to transcribe
+  audio                 path(s) to the audio file(s) to transcribe
 
 options:
   -h, --help            show this help message and exit
   -m, --model {tiny,base,small,medium,large}
                         Whisper model size (default: small)
+  -l, --language LANGUAGE
+                        language code, e.g. 'en', 'es', 'fr' (default: auto-detect)
 ```
 
 ## Models

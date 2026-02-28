@@ -9,8 +9,8 @@
 
 ## Features nuevas
 
-- [ ] Soporte para múltiples archivos (batch processing)
-- [ ] Selección de idioma (`--language`)
+- [x] Soporte para múltiples archivos (batch processing)
+- [x] Selección de idioma (`--language`)
 - [ ] Output en múltiples formatos: `.txt`, `.srt`, `.vtt`
 - [ ] Interfaz más visual con `rich` (progress bar, colores, tablas)
 
