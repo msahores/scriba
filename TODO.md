@@ -11,8 +11,8 @@
 
 - [x] Soporte para múltiples archivos (batch processing)
 - [x] Selección de idioma (`--language`)
-- [ ] Output en múltiples formatos: `.txt`, `.srt`, `.vtt`
-- [ ] Interfaz más visual con `rich` (progress bar, colores, tablas)
+- [x] Output en múltiples formatos: `.txt`, `.srt`, `.vtt`
+- [x] Interfaz más visual con `rich` (progress bar, colores, tablas)
 
 ## Nice to have
 

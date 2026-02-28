@@ -3,7 +3,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/Python-3.8%2B-green.svg)](https://www.python.org)
 
-Simple CLI tool that transcribes audio files to text using OpenAI's [Whisper](https://github.com/openai/whisper). Point it at an audio file, pick a model, and get a clean `.txt` transcription — no setup beyond `pip install`.
+Simple CLI tool that transcribes audio files to text using OpenAI's [Whisper](https://github.com/openai/whisper). Point it at any audio file, pick a model, and get a transcription in `.txt`, `.srt`, or `.vtt` — no setup beyond `pip install`.
 
 ## Quick start
 
@@ -31,12 +31,14 @@ python scriba.py interview.mp3
 python scriba.py lecture.wav -m large
 python scriba.py ep1.mp3 ep2.mp3 ep3.mp3        # batch
 python scriba.py call.ogg -l es                  # force Spanish
+python scriba.py video.mp4 -f srt vtt            # subtitles
 ```
 
 ## Usage
 
 ```
-usage: scriba [-h] [-m {tiny,base,small,medium,large}] [-l LANGUAGE] audio [audio ...]
+usage: scriba [-h] [-m {tiny,base,small,medium,large}] [-l LANGUAGE]
+              [-f {txt,srt,vtt} ...] audio [audio ...]
 
 Simple transcription helper powered by Whisper.
 
@@ -49,6 +51,8 @@ options:
                         Whisper model size (default: small)
   -l, --language LANGUAGE
                         language code, e.g. 'en', 'es', 'fr' (default: auto-detect)
+  -f, --format {txt,srt,vtt}
+                        output format(s): txt, srt, vtt (default: txt)
 ```
 
 ## Models
@@ -64,17 +68,16 @@ options:
 ## Example
 
 ```
-$ python scriba.py meeting.mp3 -m small
-⚙️  Using device: CUDA
-⏳ Loading Whisper model 'small'... (this may take a while the first time)
-🎤 Processing 'meeting.mp3'... Please wait.
-[00:00.000 --> 00:04.320]  Welcome everyone to the weekly standup.
-[00:04.320 --> 00:08.640]  Let's start with a quick round of updates.
+$ python scriba.py meeting.mp3 -m small -f txt srt
+Using device: CUDA
+Loading Whisper model 'small'...
+Detected language: en
+╭──── Saved ────╮
+│  meeting_transcription.txt │
+│  meeting_transcription.srt │
+╰───────────────╯
 
-========================================
-✅ Done! Transcription saved to:
-📄 meeting_transcription.txt
-========================================
+All done!
 ```
 
 ## License
