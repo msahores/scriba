@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "scriba"
+version = "0.1.0"
+description = "Simple transcription helper powered by Whisper"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.8"
+dependencies = [
+    "openai-whisper",
+    "rich",
+    "typer",
+]
+
+[project.scripts]
+scriba = "scriba:app"

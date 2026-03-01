@@ -14,10 +14,12 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-2. Install dependencies:
+2. Install:
 
 ```bash
 pip install --upgrade pip
+pip install .              # installs scriba as a command
+# or, for development:
 pip install -r requirements.txt
 ```
 
@@ -27,11 +29,11 @@ pip install -r requirements.txt
 3. Transcribe:
 
 ```bash
-python scriba.py interview.mp3
-python scriba.py lecture.wav -m large
-python scriba.py ep1.mp3 ep2.mp3 ep3.mp3        # batch
-python scriba.py call.ogg -l es                  # force Spanish
-python scriba.py video.mp4 -f srt vtt            # subtitles
+scriba interview.mp3
+scriba lecture.wav -m large
+scriba ep1.mp3 ep2.mp3 ep3.mp3        # batch
+scriba call.ogg -l es                  # force Spanish
+scriba video.mp4 -f srt vtt            # subtitles
 ```
 
 ## Usage
@@ -68,7 +70,7 @@ options:
 ## Example
 
 ```
-$ python scriba.py meeting.mp3 -m small -f txt srt
+$ scriba meeting.mp3 -m small -f txt srt
 Using device: CUDA
 Loading Whisper model 'small'...
 Detected language: en

@@ -1,19 +1,31 @@
-import argparse
 import os
 import warnings
+from enum import Enum
+from typing import List, Optional
 
 warnings.filterwarnings("ignore")
 
-import torch
-import whisper
+import typer
 from rich.console import Console
 from rich.panel import Panel
 from rich.progress import Progress, SpinnerColumn, TextColumn, TimeElapsedColumn
 
-MODELS = ["tiny", "base", "small", "medium", "large"]
-FORMATS = ["txt", "srt", "vtt"]
-
 console = Console()
+app = typer.Typer(help="Simple transcription helper powered by Whisper.")
+
+
+class ModelSize(str, Enum):
+    tiny = "tiny"
+    base = "base"
+    small = "small"
+    medium = "medium"
+    large = "large"
+
+
+class OutputFormat(str, Enum):
+    txt = "txt"
+    srt = "srt"
+    vtt = "vtt"
 
 
 def format_timestamp(seconds, fmt):
@@ -49,6 +61,8 @@ WRITERS = {"txt": write_txt, "srt": write_srt, "vtt": write_vtt}
 
 
 def load_model(model_size, device):
+    import whisper
+
     with Progress(
         SpinnerColumn(),
         TextColumn("[bold blue]{task.description}"),
@@ -68,7 +82,6 @@ def transcribe_audio(file_path, model, language=None, formats=None):
         formats = ["txt"]
 
     console.rule(f"[bold]{file_path}")
-    console.print(f"[dim]Transcribing...[/]")
 
     opts = {"verbose": False}
     if language:
@@ -104,40 +117,20 @@ def transcribe_audio(file_path, model, language=None, formats=None):
         console.print(Panel(file_list, title="Saved", border_style="green"))
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        prog="scriba",
-        description="Simple transcription helper powered by Whisper.",
-    )
-    parser.add_argument(
-        "audio",
-        nargs="+",
-        help="path(s) to the audio file(s) to transcribe",
-    )
-    parser.add_argument(
-        "-m", "--model",
-        choices=MODELS,
-        default="small",
-        help="Whisper model size (default: small)",
-    )
-    parser.add_argument(
-        "-l", "--language",
-        default=None,
-        help="language code, e.g. 'en', 'es', 'fr' (default: auto-detect)",
-    )
-    parser.add_argument(
-        "-f", "--format",
-        choices=FORMATS,
-        nargs="+",
-        default=["txt"],
-        help="output format(s): txt, srt, vtt (default: txt)",
-    )
-
-    args = parser.parse_args()
-
-    missing = [f for f in args.audio if not os.path.exists(f)]
+@app.command()
+def main(
+    audio: List[str] = typer.Argument(help="Path(s) to the audio file(s) to transcribe"),
+    model: ModelSize = typer.Option(ModelSize.small, "--model", "-m", help="Whisper model size"),
+    language: Optional[str] = typer.Option(None, "--language", "-l", help="Language code, e.g. 'en', 'es', 'fr' (default: auto-detect)"),
+    format: List[OutputFormat] = typer.Option([OutputFormat.txt], "--format", "-f", help="Output format(s): txt, srt, vtt"),
+):
+    """Simple transcription helper powered by Whisper."""
+    missing = [f for f in audio if not os.path.exists(f)]
     if missing:
-        parser.error(f"file(s) not found: {', '.join(missing)}")
+        console.print(f"[bold red]File(s) not found:[/] {', '.join(missing)}")
+        raise typer.Exit(1)
+
+    import torch
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     if device == "cpu":
@@ -145,15 +138,16 @@ def main():
     else:
         console.print(f"[green]Using device: {device.upper()}[/]")
 
-    model = load_model(args.model, device)
-    if model is None:
-        return
+    whisper_model = load_model(model.value, device)
+    if whisper_model is None:
+        raise typer.Exit(1)
 
-    for file_path in args.audio:
-        transcribe_audio(file_path, model, args.language, args.format)
+    fmt_values = [f.value for f in format]
+    for file_path in audio:
+        transcribe_audio(file_path, whisper_model, language, fmt_values)
 
     console.print("\n[bold green]All done![/]")
 
 
 if __name__ == "__main__":
-    main()
+    app()
